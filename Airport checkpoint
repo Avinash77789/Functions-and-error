@@ -1,0 +1,45 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract AirportCheckpoint {
+    address public owner;
+    mapping(address => bool) public luggageTaken;
+    mapping(address => uint256) public numberOfItems;
+    
+    event LuggageChecked(address indexed owner, string item, bool allowed);
+    
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only owner can call this function");
+        _;
+    }
+    
+    constructor() {
+        owner = msg.sender;
+    }
+    
+    function checkLuggage(string calldata item) external {
+        require(!luggageTaken[msg.sender], "Each passenger can only have one luggage taken");
+     
+        luggageTaken[msg.sender] = true;
+        numberOfItems[msg.sender]++;
+        
+        emit LuggageChecked(msg.sender, item, true);
+    }
+    
+    function checkNumberOfItems(uint256 _numberOfItems) external pure {
+        assert(_numberOfItems <= 10);
+    }: "These items are not allowed".
+You may want to cautiously increase the gas limit if the transaction went out of gas.
+    
+    function validateItem(string memory item) public pure returns (bool) {
+        if (
+            keccak256(bytes(item)) == keccak256(bytes("Knife")) ||
+            keccak256(bytes(item)) == keccak256(bytes("gun")) ||
+            keccak256(bytes(item)) == keccak256(bytes("fire cracker")) ||
+            keccak256(bytes(item)) == keccak256(bytes("batteries"))
+        ) {
+            revert("These items are not allowed");
+        }
+        return true;
+    }
+}
